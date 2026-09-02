@@ -13,18 +13,27 @@ the control node and the environment it runs in.
 **Scope, stated plainly:** this is a port of `ansible-core`'s own surface —
 Vault-compatible secrets, inventory, the variable precedence ladder,
 Jinja2-compatible templating, module execution, fact gathering, and the
-playbook engine — targeting a core set of roughly 40–60 `ansible.builtin`
-modules and the four `ansible-*` CLI binaries (`ansible-playbook`, `ansible`,
-`ansible-vault`, `ansible-galaxy`). It is **not** a port of the full Ansible
-collections ecosystem (thousands of modules across hundreds of third-party
-collections), and it does not include `ansible-doc`, `ansible-config`,
-`ansible-pull`, or `ansible-console`. This was a deliberate scope decision,
-not an oversight.
+playbook engine — now targeting the full `ansible.builtin` collection (62
+real modules plus 9 playbook-engine directives: `add_host`, `group_by`,
+`import_playbook`, `import_role`, `import_tasks`, `include_role`,
+`include_tasks`, `include_vars`, `meta`) and the four `ansible-*` CLI
+binaries (`ansible-playbook`, `ansible`, `ansible-vault`, `ansible-galaxy`).
+It is **not** a port of the full Ansible collections ecosystem (thousands of
+modules across hundreds of third-party collections), and it does not include
+`ansible-doc`, `ansible-config`, `ansible-pull`, or `ansible-console`. This
+was a deliberate scope decision, not an oversight.
 
-Parity is pursued piece by piece and only claimed where it is real: some
-playbook keys (`roles`, `tags`, `serial`, `delegate_to`, `vars_files`,
-`include_tasks`/`import_tasks`) are parsed — some not even that — but not yet
-acted on by the engine. See the
+Parity is pursued piece by piece and only claimed where it is real. As of
+this snapshot, all 62 modules are registered and 8 of the 9 directives
+(everything but `import_playbook`) are wired directly into the engine —
+`roles`, `tags`/`--tags`/`--skip-tags`, `serial`, `delegate_to`,
+`vars_files`, and `include_tasks`/`import_tasks`/`include_role`/
+`import_role` all went from parsed-but-inert to genuinely acted on by the
+engine since the scope statement above was last true. What's still out
+today: any playbook `strategy` other than `linear` (rejected with an
+explicit error, not silently accepted), `import_playbook`, single-level-only
+nested role variable scoping, and `register:` on a `setup:` task not
+nesting its result under `ansible_facts`. See the
 **[engine feature matrix](https://go-ansible.github.io/)** on the landing page
 for the current, code-checked status of each, and
 **[BENCHMARKS.md](https://github.com/go-ansible/.github/blob/main/BENCHMARKS.md)**

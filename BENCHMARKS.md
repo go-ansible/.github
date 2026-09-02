@@ -129,9 +129,10 @@ the full script):
 
 ### Startup-only cost
 
-go-ansible has no `--version` flag (checked `cli/cmd/ansible-playbook/main.go`
-— it isn't wired up; a real gap, not fixed here since it's outside this
-task's scope). To isolate process-startup overhead, both tools ran a
+`--version` is now wired on `ansible-playbook` (and all three other CLI
+binaries), so this section's original workaround is no longer required —
+kept anyway to isolate process-startup overhead from playbook parsing/setup
+cost, which a `--version` invocation wouldn't exercise. Both tools ran a
 single-task no-op playbook (`debug: msg: noop`) instead:
 
 | | min | median | p90 |
@@ -254,25 +255,29 @@ There's no lower rung available: Alpine+`pip install` would need to compile
 much larger image pulling in a Rust toolchain, so `-slim` glibc-based is
 genuinely close to the floor for a real, working Ansible controller image.
 
-## Gaps this benchmarking run surfaced
+## Gaps this benchmarking run surfaced (since fixed)
 
-Not asked for, but found along the way — reported per the project's own
-stated policy of only claiming parity where it's real:
+Not asked for, but found along the way when this benchmark was first run —
+reported per the project's own stated policy of only claiming parity where
+it's real. Engine work landed after this benchmark, so all three are now
+fixed; kept here as a record of what this run actually found at the time,
+rather than quietly deleted:
 
-- **No `--version` flag** on `ansible-playbook` (`cli/cmd/ansible-playbook/main.go`
-  parses `-i`/`-e`/`-t`/`--skip-tags`/`--no-color` only). Real gap, not fixed
-  here.
-- **`playbook_dir` is not populated** as a magic variable — a template
-  referencing `{{ playbook_dir }}` renders it as empty rather than the
-  playbook's directory (confirmed absent from `playbook/`'s source: no
-  match for `playbook_dir` anywhere in the engine). The benchmark playbook
-  above was written with paths relative to the working directory instead of
-  `playbook_dir` to work around this and stay fair to both tools.
-- **`inventory_hostname` is not populated in the template rendering
-  context** — `{{ inventory_hostname }}` in a `template:`-rendered file
-  came out empty against go-ansible, where real ansible-core correctly
-  substitutes `localhost`. Confirmed by diffing the rendered output of the
-  same `template:` task on both tools side by side.
+- ~~No `--version` flag on `ansible-playbook`~~ — fixed. All four CLI
+  binaries (`ansible`, `ansible-playbook`, `ansible-vault`, `ansible-galaxy`)
+  now support `--version`, and `ansible-playbook` also wires `--tags`/`-t`
+  and `--skip-tags` (confirmed by reading `cli/cmd/*/main.go` directly).
+- ~~`playbook_dir` is not populated as a magic variable~~ — fixed.
+  `playbook/engine.go` now sets it (`vc.SetVar(vars.Inventory,
+  "playbook_dir", e.BaseDir)`) after host_vars, alongside
+  `inventory_hostname`, so a same-named host_var can't shadow it.
+- ~~`inventory_hostname` is not populated in the template rendering
+  context~~ — fixed, same commit as above (`vc.SetVar(vars.Inventory,
+  "inventory_hostname", h.Name)`).
+
+The measured numbers above (binary size, latency, `FROM scratch`) predate
+this fix and were not re-run for it — they're independent of these three
+gaps and remain valid.
 
 ## Reproducing this
 
