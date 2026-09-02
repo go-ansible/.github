@@ -26,7 +26,12 @@ playbook keys (`roles`, `tags`, `serial`, `delegate_to`, `vars_files`,
 `include_tasks`/`import_tasks`) are parsed — some not even that — but not yet
 acted on by the engine. See the
 **[engine feature matrix](https://go-ansible.github.io/)** on the landing page
-for the current, code-checked status of each.
+for the current, code-checked status of each, and
+**[BENCHMARKS.md](https://github.com/go-ansible/.github/blob/main/BENCHMARKS.md)**
+for a measured comparison against real
+`ansible-core` — binary/distribution size, execution latency, and a real
+`FROM scratch` container proof (with the one shell-module limitation that
+implies, reported honestly).
 
 ## Repositories
 
