@@ -2,26 +2,31 @@
 
 # go-ansible
 
-**A functional-parity port of Ansible to pure Go — no Python, no C extensions, one static binary.**
+**A pure-Go, CGO_ENABLED=0, functional-parity port of Ansible — no Python, no C extensions, one static binary.**
 
 Ansible's engine and module library are Python: an interpreter, a package of
 dependencies, and a control node that has to carry both to run a playbook.
-go-ansible reimplements the same behavior in Go with `CGO_ENABLED=0`, so the
-result is a single static binary with no runtime to install and nothing to
-version-match between the control node and the environment it runs in.
+go-ansible reimplements the same behavior in Go, so the result is a single
+static binary with no runtime to install and nothing to version-match between
+the control node and the environment it runs in.
 
-Parity is pursued piece by piece and only claimed where it is real. Today
-that means the building blocks a playbook run depends on before a single
-task executes: decrypting secrets, resolving which hosts and groups are in
-scope, working out which value wins when the same variable is set in five
-places, and rendering the templates that reference the result. Each one is
-Ansible-compatible on its own terms — same vault format, same inventory
-syntax, same precedence order, same template semantics — and ships as an
-independent, importable Go library rather than as part of one large binary.
+**Scope, stated plainly:** this is a port of `ansible-core`'s own surface —
+Vault-compatible secrets, inventory, the variable precedence ladder,
+Jinja2-compatible templating, module execution, fact gathering, and the
+playbook engine — targeting a core set of roughly 40–60 `ansible.builtin`
+modules and the four `ansible-*` CLI binaries (`ansible-playbook`, `ansible`,
+`ansible-vault`, `ansible-galaxy`). It is **not** a port of the full Ansible
+collections ecosystem (thousands of modules across hundreds of third-party
+collections), and it does not include `ansible-doc`, `ansible-config`,
+`ansible-pull`, or `ansible-console`. This was a deliberate scope decision,
+not an oversight.
 
-More components — module execution, the playbook engine, fact gathering, a
-Galaxy client, and a CLI — are in progress; they are not yet functional and
-are deliberately left off the table below.
+Parity is pursued piece by piece and only claimed where it is real: some
+playbook keys (`roles`, `tags`, `serial`, `delegate_to`, `vars_files`,
+`include_tasks`/`import_tasks`) are parsed — some not even that — but not yet
+acted on by the engine. See the
+**[engine feature matrix](https://go-ansible.github.io/)** on the landing page
+for the current, code-checked status of each.
 
 ## Repositories
 
@@ -31,8 +36,18 @@ are deliberately left off the table below.
 | [`inventory`](https://github.com/go-ansible/inventory) | Ansible-compatible inventory: INI/YAML parsers, groups, host/group vars, patterns. |
 | [`vars`](https://github.com/go-ansible/vars) | Ansible variable precedence engine: facts, defaults, host/group vars, extra-vars. |
 | [`template`](https://github.com/go-ansible/template) | Jinja2-compatible templating with Ansible's filter and test library, pure Go CGO=0. |
-| [`brand`](https://github.com/go-ansible/brand) | Logo, favicon and social banner. |
-| [`docs`](https://github.com/go-ansible/docs) | Documentation for the go-ansible organisation. |
+| [`modules`](https://github.com/go-ansible/modules) | Ansible module execution protocol plus the core module library. |
+| [`facts`](https://github.com/go-ansible/facts) | Fact gathering (the `setup` module equivalent), pure Go CGO=0. |
+| [`playbook`](https://github.com/go-ansible/playbook) | Playbook/task/handler execution engine: loops, conditionals, blocks, handlers, become. |
+| [`cli`](https://github.com/go-ansible/cli) | The four CLI binaries: `ansible-playbook`, `ansible`, `ansible-vault`, `ansible-galaxy`. |
+
+All eight core repositories are shipped and tagged. The low-level SSH/local/
+become connection layer lives outside this org, in the project-neutral
+[`go-remoteexec/transport`](https://github.com/go-remoteexec/transport)
+(shared with `go-puppet-bolt/bolt`); `modules`, `playbook`, and `cli` depend
+on it directly. [`brand`](https://github.com/go-ansible/brand) and
+[`docs`](https://github.com/go-ansible/docs) hold logo/site assets and
+documentation — not port code.
 
 ## Standards
 
