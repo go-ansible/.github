@@ -29,18 +29,20 @@ playbook-engine directives: `add_host`, `group_by`, `import_playbook`,
 honest, always-failing stub rather than a silent approximation — real
 `synchronize` runs rsync from the controller directly against the target's
 SSH endpoint, which this port's connection abstraction cannot expose from
-inside a module), and three curated batches of `community.general` (150 of
+inside a module), and four curated batches of `community.general` (200 of
 577 total) are shipped — package managers, language/dev tooling,
 filesystem/storage, networking, system/service management, SELinux,
 read-only facts, Pacemaker cluster management, LDAP, FreeIPA, Redis,
-Consul KV, Kerberos, desktop/system config, and a handful of misc modules,
-deliberately excluding SaaS-API wrappers and cloud-VPS/hardware providers
-that need real API client SDKs rather than shell composition.
-**226 modules registered in total.** What's still out: any playbook
+Consul, Kerberos, desktop/system config, LXD/LXC containers, HashiCorp
+Nomad, database admin, RHEL subscription management, and a handful of
+misc modules, deliberately excluding SaaS-API wrappers and cloud-VPS/
+hardware providers that need real API client SDKs rather than shell
+composition.
+**276 modules registered in total.** What's still out: any playbook
 `strategy` other than `linear` (rejected with an explicit error, not
 silently accepted), single-level-only nested role variable scoping,
 `register:` on a `setup:` task not nesting its result under
-`ansible_facts`, and ~427 more `community.general` modules plus every
+`ansible_facts`, and ~377 more `community.general` modules plus every
 cloud-provider collection (amazon.aws/azure/google.cloud and similar —
 these need real Go SDK bindings per provider, a fundamentally different kind
 of work, not yet started). See the
