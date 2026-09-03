@@ -13,27 +13,34 @@ the control node and the environment it runs in.
 **Scope, stated plainly:** this is a port of `ansible-core`'s own surface —
 Vault-compatible secrets, inventory, the variable precedence ladder,
 Jinja2-compatible templating, module execution, fact gathering, and the
-playbook engine — now targeting the full `ansible.builtin` collection (62
-real modules plus 9 playbook-engine directives: `add_host`, `group_by`,
-`import_playbook`, `import_role`, `import_tasks`, `include_role`,
-`include_tasks`, `include_vars`, `meta`) and the four `ansible-*` CLI
-binaries (`ansible-playbook`, `ansible`, `ansible-vault`, `ansible-galaxy`).
-It is **not** a port of the full Ansible collections ecosystem (thousands of
-modules across hundreds of third-party collections), and it does not include
-`ansible-doc`, `ansible-config`, `ansible-pull`, or `ansible-console`. This
-was a deliberate scope decision, not an oversight.
+playbook engine — plus all 8 real `ansible-*` CLI binaries (`ansible`,
+`ansible-playbook`, `ansible-vault`, `ansible-galaxy`, `ansible-pull`,
+`ansible-doc`, `ansible-config`, `ansible-console`). It is **not** a port of
+the full Ansible collections ecosystem (thousands of modules across hundreds
+of third-party collections) — module coverage is pursued deliberately,
+collection by collection, and only claimed where it is real.
 
-Parity is pursued piece by piece and only claimed where it is real. As of
-this snapshot, all 62 modules are registered and 8 of the 9 directives
-(everything but `import_playbook`) are wired directly into the engine —
-`roles`, `tags`/`--tags`/`--skip-tags`, `serial`, `delegate_to`,
-`vars_files`, and `include_tasks`/`import_tasks`/`include_role`/
-`import_role` all went from parsed-but-inert to genuinely acted on by the
-engine since the scope statement above was last true. What's still out
-today: any playbook `strategy` other than `linear` (rejected with an
-explicit error, not silently accepted), `import_playbook`, single-level-only
-nested role variable scoping, and `register:` on a `setup:` task not
-nesting its result under `ansible_facts`. See the
+The full `ansible.builtin` collection (62 real modules plus all 9
+playbook-engine directives: `add_host`, `group_by`, `import_playbook`,
+`import_role`, `import_tasks`, `include_role`, `include_tasks`,
+`include_vars`, `meta`) is complete — 71/71, verified against a real
+`ansible-core` installation, not just internal review. Beyond builtin, the
+`ansible.posix` collection is fully ported (14 modules; `synchronize` is an
+honest, always-failing stub rather than a silent approximation — real
+`synchronize` runs rsync from the controller directly against the target's
+SSH endpoint, which this port's connection abstraction cannot expose from
+inside a module), and a first curated batch of 50 `community.general`
+modules (of 577 total) is shipped — package managers, language/dev tooling,
+filesystem/data, system config, and a handful of misc modules, deliberately
+excluding SaaS-API wrappers and cloud-VPS providers that need real API
+client SDKs rather than shell composition. **126 modules registered in
+total.** What's still out: any playbook `strategy` other than `linear`
+(rejected with an explicit error, not silently accepted), single-level-only
+nested role variable scoping, `register:` on a `setup:` task not nesting its
+result under `ansible_facts`, and ~527 more `community.general` modules plus
+every cloud-provider collection (amazon.aws/azure/google.cloud and similar —
+these need real Go SDK bindings per provider, a fundamentally different kind
+of work, not yet started). See the
 **[engine feature matrix](https://go-ansible.github.io/)** on the landing page
 for the current, code-checked status of each, and
 **[BENCHMARKS.md](https://github.com/go-ansible/.github/blob/main/BENCHMARKS.md)**
@@ -53,7 +60,7 @@ implies, reported honestly).
 | [`modules`](https://github.com/go-ansible/modules) | Ansible module execution protocol plus the core module library. |
 | [`facts`](https://github.com/go-ansible/facts) | Fact gathering (the `setup` module equivalent), pure Go CGO=0. |
 | [`playbook`](https://github.com/go-ansible/playbook) | Playbook/task/handler execution engine: loops, conditionals, blocks, handlers, become. |
-| [`cli`](https://github.com/go-ansible/cli) | The four CLI binaries: `ansible-playbook`, `ansible`, `ansible-vault`, `ansible-galaxy`. |
+| [`cli`](https://github.com/go-ansible/cli) | All 8 CLI binaries: `ansible`, `ansible-playbook`, `ansible-vault`, `ansible-galaxy`, `ansible-pull`, `ansible-doc`, `ansible-config`, `ansible-console`. |
 
 All eight core repositories are shipped and tagged. The low-level SSH/local/
 become connection layer lives outside this org, in the project-neutral
@@ -68,6 +75,9 @@ documentation — not port code.
 Pure Go, `CGO_ENABLED=0`. Every library above is validated on all six of Go's
 64-bit targets — amd64, arm64, riscv64, loong64, ppc64le and s390x — with the
 last three run under QEMU in CI, not just cross-compiled. BSD-3-Clause
-throughout.
+throughout. `cli` also publishes a multi-arch `FROM scratch` OCI image,
+[`ghcr.io/go-ansible/cli`](https://github.com/go-ansible/cli/pkgs/container/cli)
+(amd64/arm64/riscv64/ppc64le/s390x — loong64 excluded, no buildx-recognized
+platform yet), on every version tag.
 
 📖 **[go-ansible.github.io](https://go-ansible.github.io/)** · **[Documentation](https://go-ansible.github.io/docs/)**
