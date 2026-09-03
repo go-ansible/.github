@@ -29,16 +29,18 @@ playbook-engine directives: `add_host`, `group_by`, `import_playbook`,
 honest, always-failing stub rather than a silent approximation — real
 `synchronize` runs rsync from the controller directly against the target's
 SSH endpoint, which this port's connection abstraction cannot expose from
-inside a module), and a first curated batch of 50 `community.general`
-modules (of 577 total) is shipped — package managers, language/dev tooling,
-filesystem/data, system config, and a handful of misc modules, deliberately
-excluding SaaS-API wrappers and cloud-VPS providers that need real API
-client SDKs rather than shell composition. **126 modules registered in
-total.** What's still out: any playbook `strategy` other than `linear`
-(rejected with an explicit error, not silently accepted), single-level-only
-nested role variable scoping, `register:` on a `setup:` task not nesting its
-result under `ansible_facts`, and ~527 more `community.general` modules plus
-every cloud-provider collection (amazon.aws/azure/google.cloud and similar —
+inside a module), and two curated batches of `community.general` (100 of
+577 total) are shipped — package managers, language/dev tooling,
+filesystem/storage, networking, system/service management, SELinux,
+read-only facts, Pacemaker cluster management, and a handful of misc
+modules, deliberately excluding SaaS-API wrappers and cloud-VPS/hardware
+providers that need real API client SDKs rather than shell composition.
+**176 modules registered in total.** What's still out: any playbook
+`strategy` other than `linear` (rejected with an explicit error, not
+silently accepted), single-level-only nested role variable scoping,
+`register:` on a `setup:` task not nesting its result under
+`ansible_facts`, and ~477 more `community.general` modules plus every
+cloud-provider collection (amazon.aws/azure/google.cloud and similar —
 these need real Go SDK bindings per provider, a fundamentally different kind
 of work, not yet started). See the
 **[engine feature matrix](https://go-ansible.github.io/)** on the landing page
