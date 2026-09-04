@@ -29,7 +29,7 @@ playbook-engine directives: `add_host`, `group_by`, `import_playbook`,
 honest, always-failing stub rather than a silent approximation — real
 `synchronize` runs rsync from the controller directly against the target's
 SSH endpoint, which this port's connection abstraction cannot expose from
-inside a module), and seven curated batches of `community.general` (322 of
+inside a module), and eight curated batches of `community.general` (411 of
 577 total) are shipped — package managers, language/dev tooling,
 filesystem/storage, networking, system/service management, SELinux,
 read-only facts, Pacemaker cluster management, LDAP, FreeIPA, Redis,
@@ -38,20 +38,24 @@ Nomad, database admin, RHEL subscription management, AIX, Elastic Stack
 plugins, InfluxDB, Icinga2, Kopia backup, version control (bzr/hg), web/
 app servers, ISO tools, provisioning, Django extensions, IPMI, more
 niche package managers, process supervision, Univention UDM, XenServer,
-GitHub, GitLab, and a handful of misc modules, deliberately excluding
-SaaS-API wrappers and cloud-VPS/hardware providers that need real API
-client SDKs rather than shell composition — **except** GitHub and
-GitLab, whose official `gh`/`glab` CLIs this port shells out to
-directly, the same CLI-substitution approach already used for Consul/
-Redis/Terraform/Icinga2/Kopia, extended here after an explicit,
-deliberate scope decision (not applied to Slack/PagerDuty/Jenkins/
-Scaleway/Keycloak/etc., which have no comparable official CLI).
-**398 modules registered in total.** What's still out: any playbook
+GitHub, GitLab, Keycloak, Scaleway, Huawei Cloud, Jenkins, Equinix Metal,
+Linode, and a handful of misc modules, deliberately excluding SaaS-API
+wrappers that have no comparable official CLI (Slack, PagerDuty,
+Datadog, etc.) — **except** GitHub/GitLab/Keycloak/Jenkins, whose
+official `gh`/`glab`/`kcadm.sh`/`jenkins-cli.jar` CLIs this port shells
+out to directly, and **except** Scaleway/Huawei Cloud/Equinix Metal/
+Linode, cloud-VPS providers this port's own docs once named as an
+exclusion example — reconsidered because each also ships a genuine
+official CLI (`scw`/KooCLI/`metal`/`linode-cli`), the same
+CLI-substitution approach already used for Consul/Redis/Terraform/
+Icinga2/Kopia, extended twice now after two explicit, deliberate scope
+decisions (not applied to platforms with no comparable official CLI).
+**487 modules registered in total.** What's still out: any playbook
 `strategy` other than `linear` (rejected with an explicit error, not
 silently accepted), single-level-only nested role variable scoping,
 `register:` on a `setup:` task not nesting its result under
-`ansible_facts`, and ~255 more `community.general` modules — an
-increasingly SaaS/cloud/hardware-vendor-skewed remainder — plus every
+`ansible_facts`, and ~166 more `community.general` modules — an
+increasingly SaaS-only remainder — plus every
 cloud-provider collection (amazon.aws/azure/google.cloud and similar —
 these need real Go SDK bindings per provider, a fundamentally different kind
 of work, not yet started). See the
