@@ -29,21 +29,23 @@ playbook-engine directives: `add_host`, `group_by`, `import_playbook`,
 honest, always-failing stub rather than a silent approximation — real
 `synchronize` runs rsync from the controller directly against the target's
 SSH endpoint, which this port's connection abstraction cannot expose from
-inside a module), and five curated batches of `community.general` (250 of
+inside a module), and six curated batches of `community.general` (285 of
 577 total) are shipped — package managers, language/dev tooling,
 filesystem/storage, networking, system/service management, SELinux,
 read-only facts, Pacemaker cluster management, LDAP, FreeIPA, Redis,
 Consul, Kerberos, desktop/system config, LXD/LXC containers, HashiCorp
 Nomad, database admin, RHEL subscription management, AIX, Elastic Stack
 plugins, InfluxDB, Icinga2, Kopia backup, version control (bzr/hg), web/
-app servers, ISO tools, and a handful of misc modules, deliberately
-excluding SaaS-API wrappers and cloud-VPS/hardware providers that need
-real API client SDKs rather than shell composition.
-**326 modules registered in total.** What's still out: any playbook
+app servers, ISO tools, provisioning, Django extensions, IPMI, more
+niche package managers, process supervision, Univention UDM, XenServer,
+and a handful of misc modules, deliberately excluding SaaS-API wrappers
+and cloud-VPS/hardware providers that need real API client SDKs rather
+than shell composition.
+**361 modules registered in total.** What's still out: any playbook
 `strategy` other than `linear` (rejected with an explicit error, not
 silently accepted), single-level-only nested role variable scoping,
 `register:` on a `setup:` task not nesting its result under
-`ansible_facts`, and ~327 more `community.general` modules — a shrinking
+`ansible_facts`, and ~292 more `community.general` modules — a shrinking
 and increasingly SaaS/cloud/hardware-vendor-skewed remainder — plus every
 cloud-provider collection (amazon.aws/azure/google.cloud and similar —
 these need real Go SDK bindings per provider, a fundamentally different kind
