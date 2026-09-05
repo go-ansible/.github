@@ -29,7 +29,7 @@ playbook-engine directives: `add_host`, `group_by`, `import_playbook`,
 honest, always-failing stub rather than a silent approximation — real
 `synchronize` runs rsync from the controller directly against the target's
 SSH endpoint, which this port's connection abstraction cannot expose from
-inside a module), and ten curated batches of `community.general` (466 of
+inside a module), and eleven curated batches of `community.general` (476 of
 577 total) are shipped — package managers, language/dev tooling,
 filesystem/storage, networking, system/service management, SELinux,
 read-only facts, Pacemaker cluster management (including stonith/
@@ -44,9 +44,10 @@ Linode, OpenNebula, Rundeck, Alibaba Cloud, IBM SoftLayer,
 1Password, Pulp, Twilio, Aerospike, Alerta, Heroku, Mattermost, New
 Relic, DNSimple, ipinfo.io, Cloudflare, OVHcloud, Dell EMC VNX, IBM
 Spectrum Accelerate, HPE 3PAR, the Redfish hardware-vendor family (Dell
-iDRAC, HPE iLO, Lenovo XCC), and a handful of misc/local-CLI
-modules (`bower`/`easy_install`/`file_remove`/`hponcfg` among them),
-deliberately excluding SaaS-API wrappers that have no
+iDRAC, HPE iLO, Lenovo XCC), Jira, Honeybadger, Rollbar, Memset, and a
+handful of misc/local-CLI modules
+(`bower`/`easy_install`/`file_remove`/`hponcfg`/`ansible_galaxy_install`
+among them), deliberately excluding SaaS-API wrappers that have no
 comparable official CLI (Slack, PagerDuty, Datadog, etc.) — **except**
 GitHub/GitLab/Keycloak/Jenkins, whose official
 `gh`/`glab`/`kcadm.sh`/`jenkins-cli.jar` CLIs this port shells out to
@@ -68,12 +69,17 @@ have **no** usable official CLI for what their modules need: Pritunl
 and two of OVHcloud's three modules
 (`ovh_ip_failover`/`ovh_ip_loadbalancing_backend` — `ovh_monthly_billing`
 has full coverage) — all fail loud rather than fake parity, confirmed
-gaps, not assumed ones. **542 modules registered in total.** What's
+gaps, not assumed ones. Rollbar's `rollbar-cli` and Memset's `ma-shell`
+were both confirmed, by reading their real source, to have **no**
+environment-variable alternative to their access-token/API-key argv
+flag — a documented, unavoidable exception to this project's own
+no-secrets-in-argv rule, not an oversight. **552 modules registered in
+total.** What's
 still out: any
 playbook `strategy` other than `linear` (rejected with an explicit
 error, not silently accepted), single-level-only nested role variable
 scoping, `register:` on a `setup:` task not nesting its result under
-`ansible_facts`, and ~111 more `community.general` modules — an
+`ansible_facts`, and ~101 more `community.general` modules — an
 increasingly SaaS-only remainder — plus every
 cloud-provider collection (amazon.aws/azure/google.cloud and similar —
 these need real Go SDK bindings per provider, a fundamentally different kind
