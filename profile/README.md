@@ -29,38 +29,51 @@ playbook-engine directives: `add_host`, `group_by`, `import_playbook`,
 honest, always-failing stub rather than a silent approximation — real
 `synchronize` runs rsync from the controller directly against the target's
 SSH endpoint, which this port's connection abstraction cannot expose from
-inside a module), and nine curated batches of `community.general` (437 of
+inside a module), and ten curated batches of `community.general` (466 of
 577 total) are shipped — package managers, language/dev tooling,
 filesystem/storage, networking, system/service management, SELinux,
-read-only facts, Pacemaker cluster management, LDAP, FreeIPA, Redis,
+read-only facts, Pacemaker cluster management (including stonith/
+fencing), LDAP, FreeIPA, Redis,
 Consul, Kerberos, desktop/system config, LXD/LXC containers, HashiCorp
 Nomad, database admin, RHEL subscription management, AIX, Elastic Stack
 plugins, InfluxDB, Icinga2, Kopia backup, version control (bzr/hg), web/
-app servers, ISO tools, provisioning, Django extensions, IPMI, more
+app servers, ISO tools, provisioning (including Stacki), Django extensions, IPMI, more
 niche package managers, process supervision, Univention UDM, XenServer,
 GitHub, GitLab, Keycloak, Scaleway, Huawei Cloud, Jenkins, Equinix Metal,
-Linode, OpenNebula, Rundeck, Stacki, Alibaba Cloud, IBM SoftLayer,
-1Password, Pulp, Twilio, Aerospike, Alerta, and a handful of misc
-modules, deliberately excluding SaaS-API wrappers that have no
+Linode, OpenNebula, Rundeck, Alibaba Cloud, IBM SoftLayer,
+1Password, Pulp, Twilio, Aerospike, Alerta, Heroku, Mattermost, New
+Relic, DNSimple, ipinfo.io, Cloudflare, OVHcloud, Dell EMC VNX, IBM
+Spectrum Accelerate, HPE 3PAR, the Redfish hardware-vendor family (Dell
+iDRAC, HPE iLO, Lenovo XCC), and a handful of misc/local-CLI
+modules (`bower`/`easy_install`/`file_remove`/`hponcfg` among them),
+deliberately excluding SaaS-API wrappers that have no
 comparable official CLI (Slack, PagerDuty, Datadog, etc.) — **except**
 GitHub/GitLab/Keycloak/Jenkins, whose official
 `gh`/`glab`/`kcadm.sh`/`jenkins-cli.jar` CLIs this port shells out to
-directly, and **except** Scaleway/Huawei Cloud/Equinix Metal/Linode/
+directly, **except** Scaleway/Huawei Cloud/Equinix Metal/Linode/
 Alibaba Cloud/IBM SoftLayer, cloud-VPS providers this port's own docs
 once named as an exclusion example — reconsidered because each also
 ships a genuine official CLI (`scw`/KooCLI/`metal`/`linode-cli`/
-`aliyun`/`slcli`), the same CLI-substitution approach already used for
-Consul/Redis/Terraform/Icinga2/Kopia, extended across three explicit,
-deliberate scope decisions (not applied to platforms with no comparable
-official CLI). One platform, Pritunl, was investigated and found to
-have **no** usable official CLI for the resources its modules need
-(`pritunl_org`/`pritunl_org_info`/`pritunl_user`/`pritunl_user_info`
-fail loud rather than fake parity) — a confirmed gap, not an assumed
-one. **513 modules registered in total.** What's still out: any
+`aliyun`/`slcli`), and **except** the Redfish hardware-vendor family
+(also once named as an exclusion example), reconsidered because HPE's
+`ilorest` and Lenovo's `OneCli` are genuine, strong-fit official
+Redfish CLIs and Dell's `racadm` is a real official (if older,
+parallel) interface — the same CLI-substitution approach already used
+for Consul/Redis/Terraform/Icinga2/Kopia, extended across four
+explicit, deliberate scope decisions (not applied to platforms with no
+comparable official CLI — Western Digital's Redfish gear was checked
+and found to have none). Two platforms were investigated and found to
+have **no** usable official CLI for what their modules need: Pritunl
+(`pritunl_org`/`pritunl_org_info`/`pritunl_user`/`pritunl_user_info`)
+and two of OVHcloud's three modules
+(`ovh_ip_failover`/`ovh_ip_loadbalancing_backend` — `ovh_monthly_billing`
+has full coverage) — all fail loud rather than fake parity, confirmed
+gaps, not assumed ones. **542 modules registered in total.** What's
+still out: any
 playbook `strategy` other than `linear` (rejected with an explicit
 error, not silently accepted), single-level-only nested role variable
 scoping, `register:` on a `setup:` task not nesting its result under
-`ansible_facts`, and ~140 more `community.general` modules — an
+`ansible_facts`, and ~111 more `community.general` modules — an
 increasingly SaaS-only remainder — plus every
 cloud-provider collection (amazon.aws/azure/google.cloud and similar —
 these need real Go SDK bindings per provider, a fundamentally different kind
