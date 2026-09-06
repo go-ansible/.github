@@ -76,12 +76,16 @@ were both confirmed, by reading their real source, to have **no**
 environment-variable alternative to their access-token/API-key argv
 flag — a documented, unavoidable exception to this project's own
 no-secrets-in-argv rule, not an oversight. **561 modules registered in
-total.** What's
-still out: any
-playbook `strategy` other than `linear` (rejected with an explicit
-error, not silently accepted), single-level-only nested role variable
-scoping, `register:` on a `setup:` task not nesting its result under
-`ansible_facts`, and ~92 more `community.general` modules — an
+total.** The playbook engine also supports `strategy: free` (each host runs
+its whole task list and its own notified handlers independently, with no
+per-task barrier across hosts — any other named strategy is still rejected
+with an explicit error, never silently accepted), nested role variable
+scoping that composes to any depth (a role included from inside another
+role's own tasks merges its defaults/vars on top of the enclosing role's
+instead of replacing them), and `register:` on a `setup:`/`set_fact:` task
+correctly nests its result under `ansible_facts` — all three verified against
+a real `ansible-playbook`. What's
+still out: ~92 more `community.general` modules — an
 increasingly SaaS-only remainder — plus every
 cloud-provider collection (amazon.aws/azure/google.cloud and similar —
 these need real Go SDK bindings per provider, a fundamentally different kind
@@ -122,7 +126,10 @@ Pure Go, `CGO_ENABLED=0`. Every library above is validated on all six of Go's
 last three run under QEMU in CI, not just cross-compiled. BSD-3-Clause
 throughout. `cli` also publishes a multi-arch `FROM scratch` OCI image,
 [`ghcr.io/go-ansible/cli`](https://github.com/go-ansible/cli/pkgs/container/cli)
-(amd64/arm64/riscv64/ppc64le/s390x — loong64 excluded, no buildx-recognized
-platform yet), on every version tag.
+(all six — amd64/arm64/riscv64/loong64/ppc64le/s390x — the build stage cross-
+compiles from the runner's own native architecture instead of running under
+QEMU for every target, which is what makes loong64 possible at all: the
+official `golang` image itself publishes no `linux/loong64` manifest), on
+every version tag.
 
 📖 **[go-ansible.github.io](https://go-ansible.github.io/)** · **[Documentation](https://go-ansible.github.io/docs/)**
