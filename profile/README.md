@@ -84,12 +84,39 @@ scoping that composes to any depth (a role included from inside another
 role's own tasks merges its defaults/vars on top of the enclosing role's
 instead of replacing them), and `register:` on a `setup:`/`set_fact:` task
 correctly nests its result under `ansible_facts` — all three verified against
-a real `ansible-playbook`. What's
-still out: ~92 more `community.general` modules — an
+a real `ansible-playbook`.
+
+Eight more drop-in-compatibility gaps found by auditing the real Ansible
+source have since closed: fully-qualified collection names
+(`ansible.builtin.copy`, `community.general.ufw`) resolve exactly like their
+bare form; `until:`/`retries:`/`delay:` retries a task against a condition,
+deliberately reproducing a genuine off-by-one bug in `ansible-core`'s own
+retry loop rather than "fixing" it; `run_once:` restricts execution to one
+host and broadcasts its `register:` value to the rest; a real `Forks`
+concurrency cap (`ANSIBLE_FORKS`/`--forks`, default 5) bounds parallel host
+execution; `vars_prompt:` prompts interactively, honoring `private`'s real
+default of `true` and skipping entirely when the var is already set via
+`-e`; inventory now accepts executable dynamic-inventory scripts
+(`--list`/`--host`, `_meta.hostvars`); `ansible.cfg`'s `[defaults]` section is
+read for the settings this port supports, layered between environment
+variables and compiled defaults; and `async:`/`poll:` really backgrounds a
+job on the target for `command`/`shell` — the only two modules whose entire
+work reduces to one remote invocation, and so the only two this port can
+genuinely persist past the connection closing — though, disclosed rather
+than hidden, an overrunning job isn't actively killed on timeout the way real
+Ansible's `async_wrapper.py` does, since a POSIX process-group kill needs
+`setsid`, which macOS doesn't have. All eight verified against a real
+`ansible-core` installation before shipping, not assumed from its docs.
+
+What's still out: ~92 more `community.general` modules — an
 increasingly SaaS-only remainder — plus every
 cloud-provider collection (amazon.aws/azure/google.cloud and similar —
 these need real Go SDK bindings per provider, a fundamentally different kind
-of work, not yet started). See the
+of work, not yet started), the namespace/collection metadata system,
+`ansible-galaxy collection install` (this port's `ansible-galaxy` only clones
+a role from a git URL), lookup/callback plugins, and real Ansible's
+structured module documentation (`ansible-doc` here prints this port's own Go
+doc comments instead). See the
 **[engine feature matrix](https://go-ansible.github.io/)** on the landing page
 for the current, code-checked status of each, and
 **[BENCHMARKS.md](https://github.com/go-ansible/.github/blob/main/BENCHMARKS.md)**
