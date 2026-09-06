@@ -29,7 +29,7 @@ playbook-engine directives: `add_host`, `group_by`, `import_playbook`,
 honest, always-failing stub rather than a silent approximation — real
 `synchronize` runs rsync from the controller directly against the target's
 SSH endpoint, which this port's connection abstraction cannot expose from
-inside a module), and fourteen curated batches of `community.general` (487 of
+inside a module), and fifteen curated batches of `community.general` (490 of
 577 total) are shipped — package managers, language/dev tooling,
 filesystem/storage, networking, system/service management, SELinux,
 read-only facts, Pacemaker cluster management (including stonith/
@@ -68,7 +68,19 @@ comparable official CLI — Western Digital's Redfish gear was checked
 and found to have none). The same local `ilorest` also now covers
 `hpilo_boot`/`hpilo_info` — older, RIBCL-era HPE iLO modules that
 predate Redfish, but whose real one-time-boot/power/basic-info behavior
-the same physical iLO already exposes over Redfish too. Two platforms were investigated and found to
+the same physical iLO already exposes over Redfish too. The
+vendor-**neutral** `redfish_command`/`redfish_config`/`redfish_info`
+were reconsidered too, separately from the vendor family above: DMTF's
+own `redfishtool` (the Redfish standard's own authoring body's
+reference CLI, not a vendor's) covers real, networked Systems/Chassis
+power, boot override, indicator LED, sessions, account management,
+Manager power/logs/network-protocol/host-interface config, and basic
+system/service inventory — a genuine, real credential-bearing
+substitution (unlike the vendor CLIs' local-only, ignored baseuri/
+username/password), shipped incrementally with each real gap disclosed
+rather than approximated (virtual media, storage/RAID config, and most
+of `redfish_info`'s own inventory commands are not covered yet). Two
+platforms were investigated and found to
 have **no** usable official CLI for what their modules need: Pritunl
 (`pritunl_org`/`pritunl_org_info`/`pritunl_user`/`pritunl_user_info`)
 and two of OVHcloud's three modules
@@ -78,7 +90,7 @@ gaps, not assumed ones. Rollbar's `rollbar-cli` and Memset's `ma-shell`
 were both confirmed, by reading their real source, to have **no**
 environment-variable alternative to their access-token/API-key argv
 flag — a documented, unavoidable exception to this project's own
-no-secrets-in-argv rule, not an oversight. **563 modules registered in
+no-secrets-in-argv rule, not an oversight. **566 modules registered in
 total.** The playbook engine also supports `strategy: free` (each host runs
 its whole task list and its own notified handlers independently, with no
 per-task barrier across hosts — any other named strategy is still rejected
@@ -111,7 +123,7 @@ Ansible's `async_wrapper.py` does, since a POSIX process-group kill needs
 `setsid`, which macOS doesn't have. All eight verified against a real
 `ansible-core` installation before shipping, not assumed from its docs.
 
-What's still out: ~90 more `community.general` modules — an
+What's still out: ~87 more `community.general` modules — an
 increasingly SaaS-only remainder — plus every
 cloud-provider collection (amazon.aws/azure/google.cloud and similar —
 these need real Go SDK bindings per provider, a fundamentally different kind
