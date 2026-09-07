@@ -75,14 +75,16 @@ own `redfishtool` (the Redfish standard's own authoring body's
 reference CLI, not a vendor's) covers real, networked Systems/Chassis
 power, boot override, indicator LED, sessions, account management,
 Manager power/logs/network-protocol/host-interface config, and
-inventory/config info across all 7 real `redfish_info` categories
-(Systems, Chassis, Accounts, Sessions, Update, Manager, Service) — a
+inventory/config/health-report info across all 7 real `redfish_info`
+categories (Systems, Chassis, Accounts, Sessions, Update, Manager —
+now complete, every real Manager command wired — Service) — a
 genuine, real credential-bearing substitution (unlike the vendor CLIs'
 local-only, ignored baseuri/username/password), shipped incrementally
 with each real gap disclosed rather than approximated (virtual media,
-storage/RAID config, `redfish_info`'s own health-report commands
-across Systems/Chassis/Manager needing a deeper multi-subsystem
-traversal, and `GetUpdateStatus` specifically — blocked on
+storage/RAID config, `redfish_info`'s own remaining Systems/Chassis
+inventory commands (CPU, memory, storage, BIOS attributes/registries,
+a few Chassis-specific/HPE-specific ones), and `GetUpdateStatus`
+specifically — blocked on
 redfishtool's own `raw` subcommand exposing only a JSON body, never
 the HTTP status code real Ansible's own status logic needs). Two
 platforms were investigated and found to
