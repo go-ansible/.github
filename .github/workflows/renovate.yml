@@ -1,0 +1,31 @@
+name: Renovate
+
+on:
+  schedule:
+    # 01:05 UTC. The 00/11/22/33/44 walk the fleet used is full: 115 of its 120 slots are taken. This sits on a five-minute grid instead, at least 25 minutes from any other new one, in an hour holding four runners rather than five.
+    - cron: '5 1 * * *'
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: Renovate log level
+        default: info
+
+concurrency:
+  group: renovate
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Run Renovate
+        uses: renovatebot/github-action@v46.2.5
+        with:
+          configurationFile: config.js
+          token: ${{ secrets.RENOVATE_TOKEN }}
+        env:
+          LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
