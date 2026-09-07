@@ -74,12 +74,17 @@ were reconsidered too, separately from the vendor family above: DMTF's
 own `redfishtool` (the Redfish standard's own authoring body's
 reference CLI, not a vendor's) covers real, networked Systems/Chassis
 power, boot override, indicator LED, sessions, account management,
-Manager power/logs/network-protocol/host-interface config, and basic
-system/service inventory — a genuine, real credential-bearing
-substitution (unlike the vendor CLIs' local-only, ignored baseuri/
-username/password), shipped incrementally with each real gap disclosed
-rather than approximated (virtual media, storage/RAID config, and most
-of `redfish_info`'s own inventory commands are not covered yet). Two
+Manager power/logs/network-protocol/host-interface config, and
+inventory/config info across all 7 real `redfish_info` categories
+(Systems, Chassis, Accounts, Sessions, Update, Manager, Service) — a
+genuine, real credential-bearing substitution (unlike the vendor CLIs'
+local-only, ignored baseuri/username/password), shipped incrementally
+with each real gap disclosed rather than approximated (virtual media,
+storage/RAID config, `redfish_info`'s own health-report/log/host-
+interface commands needing a deeper multi-level resource walk, and
+`GetUpdateStatus` specifically — blocked on redfishtool's own `raw`
+subcommand exposing only a JSON body, never the HTTP status code real
+Ansible's own status logic needs). Two
 platforms were investigated and found to
 have **no** usable official CLI for what their modules need: Pritunl
 (`pritunl_org`/`pritunl_org_info`/`pritunl_user`/`pritunl_user_info`)
