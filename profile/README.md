@@ -81,10 +81,12 @@ now complete, every real Manager command wired — Service) — a
 genuine, real credential-bearing substitution (unlike the vendor CLIs'
 local-only, ignored baseuri/username/password), shipped incrementally
 with each real gap disclosed rather than approximated (virtual media,
-storage/RAID config, `redfish_info`'s own remaining Systems/Chassis
-inventory commands (CPU, memory, storage, BIOS attributes/registries,
-a few Chassis-specific/HPE-specific ones), and `GetUpdateStatus`
-specifically — blocked on
+storage/RAID config, `redfish_info`'s own remaining storage inventory
+commands (a deep, dual-code-path traversal covering both the modern
+Storage resource shape and the older SimpleStorage one), BIOS
+registries (needs vendor-aware HPE iLO4/iLO5 workarounds this port has
+no hardware to verify against), a few Chassis-specific/HPE-specific
+commands, and `GetUpdateStatus` specifically — blocked on
 redfishtool's own `raw` subcommand exposing only a JSON body, never
 the HTTP status code real Ansible's own status logic needs). Two
 platforms were investigated and found to
