@@ -80,11 +80,11 @@ inventory/config info across all 7 real `redfish_info` categories
 genuine, real credential-bearing substitution (unlike the vendor CLIs'
 local-only, ignored baseuri/username/password), shipped incrementally
 with each real gap disclosed rather than approximated (virtual media,
-storage/RAID config, `redfish_info`'s own health-report/log/host-
-interface commands needing a deeper multi-level resource walk, and
-`GetUpdateStatus` specifically — blocked on redfishtool's own `raw`
-subcommand exposing only a JSON body, never the HTTP status code real
-Ansible's own status logic needs). Two
+storage/RAID config, `redfish_info`'s own health-report commands
+across Systems/Chassis/Manager needing a deeper multi-subsystem
+traversal, and `GetUpdateStatus` specifically — blocked on
+redfishtool's own `raw` subcommand exposing only a JSON body, never
+the HTTP status code real Ansible's own status logic needs). Two
 platforms were investigated and found to
 have **no** usable official CLI for what their modules need: Pritunl
 (`pritunl_org`/`pritunl_org_info`/`pritunl_user`/`pritunl_user_info`)
