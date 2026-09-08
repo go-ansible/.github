@@ -76,17 +76,16 @@ reference CLI, not a vendor's) covers real, networked Systems/Chassis
 power, boot override, indicator LED, sessions, account management,
 Manager power/logs/network-protocol/host-interface config, and
 inventory/config/health-report info across all 7 real `redfish_info`
-categories (Systems, Chassis, Accounts, Sessions, Update, Manager —
-now complete, every real Manager command wired — Service) — a
-genuine, real credential-bearing substitution (unlike the vendor CLIs'
-local-only, ignored baseuri/username/password), shipped incrementally
-with each real gap disclosed rather than approximated (virtual media,
-storage/RAID config, BIOS registries (needs vendor-aware HPE
-iLO4/iLO5 workarounds this port has no hardware to verify against —
-the last unwired Systems command in `redfish_info`, which is
-otherwise complete: 13 of 14 real commands), a few
-Chassis-specific/HPE-specific commands, and `GetUpdateStatus`
-specifically — blocked on
+categories (Systems, Chassis, Accounts, Sessions, Update, Manager,
+Service) — Manager and Chassis are now complete, every real command
+wired, Systems has 13 of 14, Update has 3 of 4 — a genuine, real
+credential-bearing substitution (unlike the vendor CLIs' local-only,
+ignored baseuri/username/password), shipped incrementally with each
+real gap disclosed rather than approximated (virtual media,
+storage/RAID config, and two commands genuinely unreachable through
+further CLI-substitution work: `GetBiosRegistries` (needs
+vendor-aware HPE iLO4/iLO5 workarounds this port has no hardware to
+verify against) and `GetUpdateStatus` — blocked on
 redfishtool's own `raw` subcommand exposing only a JSON body, never
 the HTTP status code real Ansible's own status logic needs). Two
 platforms were investigated and found to
