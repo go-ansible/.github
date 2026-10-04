@@ -98,7 +98,19 @@ gaps, not assumed ones. Rollbar's `rollbar-cli` and Memset's `ma-shell`
 were both confirmed, by reading their real source, to have **no**
 environment-variable alternative to their access-token/API-key argv
 flag — a documented, unavoidable exception to this project's own
-no-secrets-in-argv rule, not an oversight. **566 modules registered in
+no-secrets-in-argv rule, not an oversight; so is macOS's
+`security add-generic-password -w`, which `keyring` uses and which has no
+stdin form either (measured: piping the value in, with no `-w` argument,
+stores nothing), the Keychain API needing the cgo this port does not use.
+**A security audit of the module library found exactly one unintended
+breach of that rule** — `keyring`'s own shell prefix, where an assignment
+followed by a second statement keeps the shell alive holding the secret in
+its `argv` — **and one command injection**: `async_status`'s `jid`, which
+arrives from a playbook argument and was interpolated *unquoted* into an
+`rm -rf`. Both are fixed, with the findings
+[written up](https://go-ansible.github.io/docs/security/) rather than
+quietly patched — a port that publishes only its clean audits has not
+published an audit. **566 modules registered in
 total.** The playbook engine also supports `strategy: free` (each host runs
 its whole task list and its own notified handlers independently, with no
 per-task barrier across hosts — any other named strategy is still rejected
