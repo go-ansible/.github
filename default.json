@@ -35,6 +35,16 @@
       ],
       "automerge": false,
       "groupName": null
+    },
+    {
+      "description": [
+        "Hold the CI Python at 3.14 or below. It is not this port's own interpreter -- nothing here runs Python -- it is the one that has to run real ansible-core, the reference the conformance tests in inventory, template, vault and playbook measure against. ansible-core 2.21.4 INSTALLS cleanly on Python 3.15 and then refuses to start: ansible/module_utils/_internal/_patches/__init__.py patches CPython internals and reads dataclasses._is_type, a private attribute 3.15 removed, so the first ansible command dies with AttributeError: module 'dataclasses' has no attribute '_is_type' (measured 2026-10-18 on macos-latest, go-ansible/inventory#32).",
+        "The successful install is the trap: without a step that actually RUNS the interpreter, 3.15 looks fine and the oracle quietly stops being an oracle while every test still passes. The `ansible -m ping` smoke test added on 2026-10-18 is what turned it into a red job -- the CI gate holding, exactly as the Go toolchain rule above describes, rather than this file. Note that the first rule automerges minor updates, so a green run would have merged this one unattended. Raise the ceiling when ansible-core itself supports 3.15, and re-run that smoke test on macOS before believing it."
+      ],
+      "matchDepNames": [
+        "python"
+      ],
+      "allowedVersions": "<3.15"
     }
   ]
 }
