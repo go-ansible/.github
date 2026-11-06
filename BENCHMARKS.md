@@ -43,6 +43,22 @@ you rerun these.
 
 ## 1. Binary / distribution size
 
+> **Re-measured 2026-11-06 (go-ansible side only).** The figures below this
+> box are the 2026-09-02 run, kept as it was. The binary has roughly doubled
+> since then. From a clean clone of the **cli v0.149.0** tag, Go 1.27.3:
+>
+> | Artifact | Size |
+> | --- | --- |
+> | `ansible-playbook`, linux/amd64, `CGO_ENABLED=0`, unstripped | 29,590,311 B (29.6 MB) |
+> | `ansible-playbook`, linux/amd64, `CGO_ENABLED=0`, `-ldflags="-s -w"` | 20,934,816 B (20.9 MB) |
+>
+> `file`: `ELF 64-bit LSB executable, x86-64, statically linked`. On cli
+> v0.148.0, before go-redfish was linked in, the same builds were 28.9 MB
+> and 20.4 MB. The ansible-core side (132M) was **not** re-measured: there
+> was no ansible install on the measuring machine. The "9–14× smaller"
+> ratio further down is from 2026-09-02 and does not hold for today's
+> binary.
+
 go-ansible ships one binary; real Ansible needs a Python interpreter plus a
 venv of pip packages. Built with:
 
@@ -149,6 +165,26 @@ contributor to the 68× gap above — most of the 1.7s full-playbook run is
 still Python/module-import overhead, not the 8 tasks themselves.
 
 ## 3. `FROM scratch` container proof
+
+> **What the 21.3MB below is, and what we publish (2026-11-06).** The image
+> measured in this section, `go-ansible-scratch:bench-arm64`, holds **one**
+> cross-compiled `ansible-playbook`. It was built by the benchmark Dockerfile
+> shown below, which is not committed anywhere. It is **not** the image the
+> project publishes. The published image is built by `cli`'s own `Dockerfile`
+> (`.github/workflows/docker.yml`, on every version tag). It is `FROM scratch`
+> too, with **all 9** CLI binaries in `/usr/local/bin`. For
+> `ghcr.io/go-ansible/cli:v0.149.0`, linux/amd64:
+>
+> ```
+> $ crane manifest --platform linux/amd64 ghcr.io/go-ansible/cli:v0.149.0
+>   one layer, application/vnd.oci.image.layer.v1.tar+gzip, size 57533692   # 57.5 MB to pull
+> $ crane export --platform linux/amd64 ghcr.io/go-ansible/cli:v0.149.0 fs.tar
+>   fs.tar: 146603520 bytes                                                # 146.6 MB unpacked
+> ```
+>
+> Use these figures when describing the container people actually pull. The
+> 21.3MB below shows only that a scratch image runs a playbook. The "13×"
+> comparison with `real-ansible-slim:bench` belongs to that one-binary image.
 
 The differentiator: a `CGO_ENABLED=0` Go binary has zero runtime
 dependencies, so it can run in an empty container. Real Ansible fundamentally
@@ -316,6 +352,10 @@ docker run --rm go-ansible-scratch:bench
 # Real-Ansible contrast image
 docker build --platform linux/arm64 -t real-ansible-slim:bench docker/realansible/
 docker images real-ansible-slim:bench python:3.13-slim
+
+# The published image (no Docker daemon needed)
+crane manifest --platform linux/amd64 ghcr.io/go-ansible/cli:<tag>   # compressed layer size
+crane export   --platform linux/amd64 ghcr.io/go-ansible/cli:<tag> fs.tar && ls -l fs.tar
 ```
 
 Substitute `TOOL` with `/tmp/go-ansible-playbook` or
